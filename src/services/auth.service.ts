@@ -10,7 +10,7 @@ export class AuthService {
     const user = await this.userService.findOne({ email });
     if (user && user.password === pass) {
       const payload = { email };
-      const token = sign(payload, 'secret', { expiresIn: '1h' });
+      const token = sign(payload, process.env.JWT_SECRET ?? 'secret', { expiresIn: '1h' });
       return { token };
     }
     throw new BadRequestException('Invalid credentials');
