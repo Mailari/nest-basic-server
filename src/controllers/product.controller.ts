@@ -27,6 +27,7 @@ export class ProductController {
   }
 
   @Put(':id')
+  @UsePipes(new JoiValidationPipe(productUpdateSchema))
   update(@Param('id') id: string, @Body() product: Product): Promise<Product> {
     return this.productService.update(id, product);
   }
