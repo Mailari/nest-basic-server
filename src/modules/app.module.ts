@@ -4,20 +4,16 @@ import { AppService } from './../services/app.service';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AuthModule } from './auth.module';
 import { ProductModule } from './product.module';
-
-const databaseConfig: TypeOrmModuleOptions = {
-  type: 'postgres',
-  host: process.env.DB_HOST ?? 'localhost',
-  port: parseInt(process.env.DB_PORT ?? '2000'),
-  username: process.env.DB_USERNAME ?? 'postgres',
-  password: process.env.DB_PASSWORD ?? 'postgres',
-  database: process.env.DB_NAME ?? 'test',
-  entities: [__dirname + '/../entities/*.entity{.ts,.js}'],
-  synchronize: true
-};
+import { ConfigModule } from '@nestjs/config';
+import { config, DataBaseConfig } from 'src/config/database.config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig), AuthModule, ProductModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    TypeOrmModule.forRootAsync({ imports: [ConfigModule], useClass: DataBaseConfig }),
+    AuthModule,
+    ProductModule
+  ],
   controllers: [AppController],
   providers: [AppService]
 })
